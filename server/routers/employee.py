@@ -1,0 +1,42 @@
+from fastapi import APIRouter
+from pydantic import BaseModel
+
+router = APIRouter(prefix="/employee", tags=["employee"])
+
+
+class Employee(BaseModel):
+    id: str
+    date_of_birth: str
+    image: str
+    email: str
+    first_name: str
+    last_name: str
+    title: str
+    address: str
+    country: str
+    bio: str
+    rating: str
+
+
+EMPLOYEES: list[Employee] = [
+    Employee(id="8c8c13b6-35ed-3ffb-92d5-c438825df67f", date_of_birth="1990-06-29", image="https://lorempixel.com/640/480/people/?96612", email="andres34@gmail.com", first_name="Dayni", last_name="Mayez", title="Mr.", address="18342 Alisa Square Suite 259", country="USA", bio="Passionate about technology and innovation.", rating="3.06"),
+    Employee(id="1a2b3c4d-5e6f-7a8b-9c0d-e1f2a3b4c5d6", date_of_birth="1985-03-14", image="https://lorempixel.com/640/480/people/?11203", email="sarah.johnson@gmail.com", first_name="Sarah", last_name="Johnson", title="Ms.", address="4521 Oak Avenue Apt 12", country="USA", bio="Dedicated professional with 10 years of experience.", rating="4.20"),
+    Employee(id="2b3c4d5e-6f7a-8b9c-0d1e-f2a3b4c5d6e7", date_of_birth="1992-11-08", image="https://lorempixel.com/640/480/people/?33401", email="carlos.ruiz@hotmail.com", first_name="Carlos", last_name="Ruiz", title="Mr.", address="9871 Maple Drive Suite 100", country="Mexico", bio="Creative thinker with a passion for design.", rating="3.75"),
+    Employee(id="3c4d5e6f-7a8b-9c0d-1e2f-a3b4c5d6e7f8", date_of_birth="1988-07-22", image="https://lorempixel.com/640/480/people/?55789", email="emily.chen@yahoo.com", first_name="Emily", last_name="Chen", title="Dr.", address="2233 Birch Lane Unit 5", country="Canada", bio="Research scientist specializing in data analytics.", rating="4.80"),
+    Employee(id="4d5e6f7a-8b9c-0d1e-2f3a-b4c5d6e7f8a9", date_of_birth="1995-01-30", image="https://lorempixel.com/640/480/people/?72144", email="michael.brown@gmail.com", first_name="Michael", last_name="Brown", title="Mr.", address="5599 Pine Street Apt 3B", country="USA", bio="Enthusiastic team player with strong leadership skills.", rating="3.50"),
+    Employee(id="5e6f7a8b-9c0d-1e2f-3a4b-c5d6e7f8a9b0", date_of_birth="1983-09-17", image="https://lorempixel.com/640/480/people/?84320", email="julia.schmidt@web.de", first_name="Julia", last_name="Schmidt", title="Ms.", address="Hauptstraße 47", country="Germany", bio="Expert in project management and agile methodologies.", rating="4.55"),
+    Employee(id="6f7a8b9c-0d1e-2f3a-4b5c-d6e7f8a9b0c1", date_of_birth="1991-04-05", image="https://lorempixel.com/640/480/people/?90011", email="james.wilson@outlook.com", first_name="James", last_name="Wilson", title="Mr.", address="7712 Cedar Court Suite 8", country="UK", bio="Software engineer with a focus on backend systems.", rating="3.90"),
+    Employee(id="7a8b9c0d-1e2f-3a4b-5c6d-e7f8a9b0c1d2", date_of_birth="1987-12-19", image="https://lorempixel.com/640/480/people/?21567", email="amara.diallo@gmail.com", first_name="Amara", last_name="Diallo", title="Ms.", address="14 Rue des Lilas", country="France", bio="Marketing specialist with a flair for storytelling.", rating="4.10"),
+    Employee(id="8b9c0d1e-2f3a-4b5c-6d7e-f8a9b0c1d2e3", date_of_birth="1993-08-11", image="https://lorempixel.com/640/480/people/?63489", email="liam.oreilly@gmail.com", first_name="Liam", last_name="O'Reilly", title="Mr.", address="22 Grafton Street Flat 6", country="Ireland", bio="Full-stack developer passionate about open source.", rating="4.40"),
+    Employee(id="9c0d1e2f-3a4b-5c6d-7e8f-a9b0c1d2e3f4", date_of_birth="1986-02-27", image="https://lorempixel.com/640/480/people/?47823", email="sofia.rossi@libero.it", first_name="Sofia", last_name="Rossi", title="Ms.", address="Via Roma 88 Interno 3", country="Italy", bio="Financial analyst with expertise in European markets.", rating="3.85"),
+    Employee(id="0d1e2f3a-4b5c-6d7e-8f9a-b0c1d2e3f4a5", date_of_birth="1994-05-16", image="https://lorempixel.com/640/480/people/?58902", email="noah.peterson@gmail.com", first_name="Noah", last_name="Peterson", title="Mr.", address="3301 Willow Way Apt 201", country="USA", bio="UX designer driven by user-centered design principles.", rating="4.65"),
+    Employee(id="1e2f3a4b-5c6d-7e8f-9a0b-c1d2e3f4a5b6", date_of_birth="1989-10-03", image="https://lorempixel.com/640/480/people/?34156", email="yuki.tanaka@docomo.ne.jp", first_name="Yuki", last_name="Tanaka", title="Ms.", address="3-14-7 Shibuya", country="Japan", bio="Operations manager with strong cross-cultural communication skills.", rating="4.00"),
+    Employee(id="2f3a4b5c-6d7e-8f9a-0b1c-d2e3f4a5b6c7", date_of_birth="1996-06-21", image="https://lorempixel.com/640/480/people/?79034", email="lucas.ferreira@hotmail.com", first_name="Lucas", last_name="Ferreira", title="Mr.", address="Av. Paulista 1500 Conj 42", country="Brazil", bio="Growth hacker with a background in digital marketing.", rating="3.60"),
+    Employee(id="3a4b5c6d-7e8f-9a0b-1c2d-e3f4a5b6c7d8", date_of_birth="1984-08-09", image="https://lorempixel.com/640/480/people/?12678", email="priya.sharma@gmail.com", first_name="Priya", last_name="Sharma", title="Dr.", address="42 MG Road Block C", country="India", bio="AI researcher with publications in machine learning.", rating="4.90"),
+    Employee(id="4b5c6d7e-8f9a-0b1c-2d3e-f4a5b6c7d8e9", date_of_birth="1991-03-25", image="https://lorempixel.com/640/480/people/?66321", email="oliver.nguyen@gmail.com", first_name="Oliver", last_name="Nguyen", title="Mr.", address="88 Collins Street Level 4", country="Australia", bio="Product manager bridging the gap between tech and business.", rating="4.30"),
+]
+
+
+@router.get("/list", response_model=list[Employee])
+def list_employees() -> list[Employee]:
+    return EMPLOYEES
