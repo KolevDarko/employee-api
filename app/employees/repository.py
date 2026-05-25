@@ -3,12 +3,24 @@ from sqlalchemy.dialects.sqlite import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.employees.models import EmployeeRow
+from app.employees.schemas import EmployeeFilters
 
 
-async def get_all(session: AsyncSession) -> list[EmployeeRow]:
-    result = await session.scalars(select(EmployeeRow))
-    return list(result.all())
+async def get_filtered_employees(session: AsyncSession, filters: EmployeeFilters) -> list[EmployeeRow]:
+    query = select(EmployeeRow)
+    if filters.country:
+        query = query.where(EmployeeRow.country == filters.country)
+    if filters.min_rating is not None:
+        query = query.where(EmployeeRow.rating >= filters.min_rating)
+    if filters.sort_by:
+        sort_col = getattr(EmployeeRow, filters.sort_by)
+        query = query.order_by(sort_col.desc() if filters.sort_order == "desc" else sort_col.asc())
+    result = await session.scalars(query)
+    return result
 
+async def get_by_id(session: AsyncSession, employee_id: str) -> EmployeeRow | None:
+    result = await session.scalar(select(EmployeeRow).where(EmployeeRow.id == employee_id))
+    return result
 
 async def upsert_many(session: AsyncSession, employees: list[EmployeeRow]) -> None:
     if not employees:

@@ -1,8 +1,14 @@
 from datetime import date
 from uuid import UUID
-
+from typing import Literal
 from pydantic import BaseModel, ConfigDict, EmailStr, HttpUrl, field_validator
 
+class EmployeeFilters(BaseModel):
+    country: str | None = None
+    min_rating: float | None = None
+    sort_by: Literal["first_name", "last_name", "rating", "date_of_birth"] | None = None
+    sort_order: Literal["asc", "desc"] | None = "asc"
+    format: Literal["json", "csv"] | None = "json"
 
 class UpstreamEmployee(BaseModel):
     """Raw shape returned by the upstream server API."""
