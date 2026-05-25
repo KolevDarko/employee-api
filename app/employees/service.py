@@ -7,7 +7,9 @@ from app.employees import repository
 from app.employees.models import EmployeeRow
 from app.employees.schemas import UpstreamEmployee
 from app.settings import get_settings
+from logging import getLogger
 
+employees_logger = getLogger(__name__)
 
 async def fetch_and_store_employees(session: AsyncSession) -> None:
     upstream_employees = await _fetch_from_upstream()
@@ -22,7 +24,14 @@ async def _fetch_from_upstream() -> list[UpstreamEmployee]:
     async with httpx.AsyncClient() as client:
         response = await client.get(settings.employee_api_employees_url, headers=headers)
         response.raise_for_status()
-        return [UpstreamEmployee.model_validate(e) for e in response.json()]
+        upstream_employees = []
+        for e in response.json():
+            try:
+                upstream_employees.append(UpstreamEmployee.model_validate(e))
+            except ValidationError as e:
+                employees_logger.error(f"Invalid employee: {e}", exc_info=True)
+                continue
+        return upstream_employees
 
 
 def _to_row(upstream: UpstreamEmployee) -> EmployeeRow:
@@ -37,6 +46,6 @@ def _to_row(upstream: UpstreamEmployee) -> EmployeeRow:
         address=upstream.address,
         country=upstream.country,
         bio=upstream.bio,
-        rating=float(upstream.rating),
+        rating=upstream.rating,
         fetched_at=datetime.now(timezone.utc),
     )
