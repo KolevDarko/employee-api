@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     employee_api_grant_type: str = "password"
     auth_header_name: str = "Access-Token"
 
+    database_url: str = "sqlite+aiosqlite:///./dev.db"
+    database_url_sync: str = "sqlite:///./dev.db"
 
 @lru_cache
 def get_settings() -> Settings:
