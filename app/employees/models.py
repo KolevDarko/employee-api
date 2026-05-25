@@ -1,5 +1,5 @@
 from app.db.base import Base
-from sqlalchemy import String, Date, Float, Column
+from sqlalchemy import String, Date, Float, Column, DateTime, func
 
 
 class EmployeeRow(Base):
@@ -15,4 +15,5 @@ class EmployeeRow(Base):
     country = Column(String)
     bio = Column(String)
     rating = Column(Float)
+    fetched_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
 

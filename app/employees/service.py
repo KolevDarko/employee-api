@@ -1,4 +1,5 @@
 import httpx
+from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.service import get_token
@@ -37,4 +38,5 @@ def _to_row(upstream: UpstreamEmployee) -> EmployeeRow:
         country=upstream.country,
         bio=upstream.bio,
         rating=float(upstream.rating),
+        fetched_at=datetime.now(timezone.utc),
     )
