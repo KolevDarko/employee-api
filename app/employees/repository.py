@@ -12,11 +12,15 @@ async def get_filtered_employees(session: AsyncSession, filters: EmployeeFilters
         query = query.where(EmployeeRow.country == filters.country)
     if filters.min_rating is not None:
         query = query.where(EmployeeRow.rating >= filters.min_rating)
+    if filters.limit is not None:
+        query = query.limit(filters.limit)
+    if filters.offset:
+        query = query.offset(filters.offset)
     if filters.sort_by:
         sort_col = getattr(EmployeeRow, filters.sort_by)
         query = query.order_by(sort_col.desc() if filters.sort_order == "desc" else sort_col.asc())
     result = await session.scalars(query)
-    return result
+    return list(result.all())
 
 async def get_by_id(session: AsyncSession, employee_id: str) -> EmployeeRow | None:
     result = await session.scalar(select(EmployeeRow).where(EmployeeRow.id == employee_id))
