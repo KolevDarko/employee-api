@@ -9,7 +9,7 @@ from app.employees.schemas import UpstreamEmployee
 from app.settings import get_settings
 from logging import getLogger
 
-employees_logger = getLogger(__name__)
+logger = getLogger('employee')
 
 async def fetch_and_store_employees(session: AsyncSession) -> None:
     upstream_employees = await _fetch_from_upstream()
@@ -27,9 +27,12 @@ async def _fetch_from_upstream() -> list[UpstreamEmployee]:
         upstream_employees = []
         for e in response.json():
             try:
-                upstream_employees.append(UpstreamEmployee.model_validate(e))
+                employee = UpstreamEmployee.model_validate(e)
+                upstream_employees.append(employee)
+                if employee.model_extra:
+                    logger.warning(f"Extra fields from upstream: {employee.model_extra}")
             except ValidationError as e:
-                employees_logger.error(f"Invalid employee: {e}", exc_info=True)
+                logger.error(f"Invalid upstream employee: {e}", exc_info=True)
                 continue
         return upstream_employees
 
