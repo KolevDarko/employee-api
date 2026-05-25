@@ -22,6 +22,17 @@ class Settings(BaseSettings):
     database_url: str = "sqlite+aiosqlite:///./dev.db"
     database_url_sync: str = "sqlite:///./dev.db"
 
+    @computed_field
+    @property
+    def employee_api_token_url(self) -> str:
+        return f"{self.employee_api_base_url.rstrip('/')}/api/token"
+
+    @computed_field
+    @property
+    def employee_api_employees_url(self) -> str:
+        return f"{self.employee_api_base_url.rstrip('/')}/api/employee/list"
+
+
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
