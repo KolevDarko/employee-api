@@ -17,9 +17,10 @@ async def upsert_many(session: AsyncSession, employees: list[EmployeeRow]) -> No
         {c.key: getattr(emp, c.key) for c in EmployeeRow.__table__.columns}
         for emp in employees
     ]
+    columns_to_update = [c.key for c in EmployeeRow.__table__.columns if c.key != "id"]
     stmt = insert(EmployeeRow).values(rows).on_conflict_do_update(
         index_elements=["id"],
-        set_={c: insert(EmployeeRow).excluded[c] for c in rows[0] if c != "id"},
+        set_={c: insert(EmployeeRow).excluded[c] for c in columns_to_update},
     )
     await session.execute(stmt)
     await session.commit()
