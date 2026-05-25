@@ -1,5 +1,7 @@
+from datetime import UTC, datetime
+from logging import getLogger
+
 import httpx
-from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.service import get_token
@@ -7,9 +9,8 @@ from app.employees import repository
 from app.employees.models import EmployeeRow
 from app.employees.schemas import UpstreamEmployee
 from app.settings import get_settings
-from logging import getLogger
 
-logger = getLogger('employee')
+logger = getLogger(__name__)
 
 async def fetch_and_store_employees(session: AsyncSession) -> None:
     upstream_employees = await _fetch_from_upstream()
@@ -50,5 +51,5 @@ def _to_row(upstream: UpstreamEmployee) -> EmployeeRow:
         country=upstream.country,
         bio=upstream.bio,
         rating=upstream.rating,
-        fetched_at=datetime.now(timezone.utc),
+        fetched_at=datetime.now(UTC),
     )

@@ -21,6 +21,7 @@ class Settings(BaseSettings):
 
     database_url: str = "sqlite+aiosqlite:///./dev.db"
     database_url_sync: str = "sqlite:///./dev.db"
+    log_level: str = "INFO"
 
     @computed_field
     @property

@@ -1,5 +1,6 @@
+from sqlalchemy import Column, Date, DateTime, Float, String, func
+
 from app.db.base import Base
-from sqlalchemy import String, Date, Float, Column, DateTime, func
 
 
 class EmployeeRow(Base):

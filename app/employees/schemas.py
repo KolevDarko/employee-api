@@ -1,7 +1,9 @@
 from datetime import date
-from uuid import UUID
 from typing import Literal
+from uuid import UUID
+
 from pydantic import BaseModel, ConfigDict, EmailStr, HttpUrl, field_validator
+
 
 class EmployeeFilters(BaseModel):
     country: str | None = None

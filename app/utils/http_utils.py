@@ -1,9 +1,8 @@
 import csv
 import io
-import json
 from typing import Literal
 
-from fastapi.responses import Response, JSONResponse
+from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 
 

@@ -1,5 +1,4 @@
-from datetime import datetime, timezone
-
+from datetime import UTC, datetime
 
 _store: dict[str, datetime] = {}
 
@@ -12,4 +11,4 @@ def is_valid(token: str) -> bool:
     expires_at = _store.get(token)
     if expires_at is None:
         return False
-    return datetime.now(timezone.utc) < expires_at
+    return datetime.now(UTC) < expires_at

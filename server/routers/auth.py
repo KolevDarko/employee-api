@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 from fastapi import APIRouter
@@ -27,7 +27,7 @@ class TokenResponse(BaseModel):
 
 def build_token_response() -> TokenResponse:
     token = str(uuid4())
-    expires_at = datetime.now(timezone.utc) + timedelta(minutes=TOKEN_TTL_MINUTES)
+    expires_at = datetime.now(UTC) + timedelta(minutes=TOKEN_TTL_MINUTES)
     token_store.save_token(token, expires_at)
     return TokenResponse(
         access_token=token,

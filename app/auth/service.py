@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import httpx
 
@@ -13,7 +13,7 @@ class AuthToken:
         self.expires_at = expires_at
 
     def is_expired(self) -> bool:
-        return datetime.now(timezone.utc) > self.expires_at
+        return datetime.now(UTC) > self.expires_at
 
 
 async def get_token() -> str:

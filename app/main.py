@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 
-from app.lib.fetch_employees import fetch_employees
+from app.logging_config import configure_logging
+
+configure_logging()
 
 app = FastAPI()
 

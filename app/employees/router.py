@@ -1,9 +1,9 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.employees.schemas import EmployeeRead, EmployeeFilters
-from app.employees.repository import get_filtered_employees, get_by_id
 from app.db.session import get_session
+from app.employees.repository import get_by_id, get_filtered_employees
+from app.employees.schemas import EmployeeFilters, EmployeeRead
 from app.utils.http_utils import json_or_csv_response
 
 router = APIRouter(prefix="/employees", tags=["employees"])
