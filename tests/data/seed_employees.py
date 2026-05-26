@@ -1,0 +1,127 @@
+from app.employees.models import EmployeeRow
+from tests.factories import make_employee
+
+
+def seed_employees_data() -> list[EmployeeRow]:
+    return [
+        make_employee(
+            id="emp-01",
+            country="MK",
+            rating=4.9,
+            first_name="Ana",
+            last_name="Angelovska",
+        ),
+        make_employee(
+            id="emp-02",
+            country="MK",
+            rating=4.4,
+            first_name="Bojan",
+            last_name="Borisov",
+        ),
+        make_employee(
+            id="emp-03",
+            country="MK",
+            rating=3.8,
+            first_name="Elena",
+            last_name="Cvetkovska",
+        ),
+        make_employee(
+            id="emp-04",
+            country="MK",
+            rating=3.2,
+            first_name="Filip",
+            last_name="Dimitrov",
+        ),
+        make_employee(
+            id="emp-05",
+            country="MK",
+            rating=2.7,
+            first_name="Irena",
+            last_name="Georgieva",
+        ),
+        make_employee(
+            id="emp-06",
+            country="MK",
+            rating=1.9,
+            first_name="Marko",
+            last_name="Ivanov",
+        ),
+        make_employee(
+            id="emp-07",
+            country="USA",
+            rating=5.0,
+            first_name="Alice",
+            last_name="Adams",
+        ),
+        make_employee(
+            id="emp-08",
+            country="USA",
+            rating=4.6,
+            first_name="Brian",
+            last_name="Brown",
+        ),
+        make_employee(
+            id="emp-09",
+            country="USA",
+            rating=4.1,
+            first_name="Clara",
+            last_name="Clark",
+        ),
+        make_employee(
+            id="emp-10",
+            country="USA",
+            rating=3.7,
+            first_name="Daniel",
+            last_name="Davis",
+        ),
+        make_employee(
+            id="emp-11", country="USA", rating=3.1, first_name="Emma", last_name="Evans"
+        ),
+        make_employee(
+            id="emp-12",
+            country="USA",
+            rating=2.5,
+            first_name="Frank",
+            last_name="Foster",
+        ),
+        make_employee(
+            id="emp-13",
+            country="USA",
+            rating=1.5,
+            first_name="Grace",
+            last_name="Green",
+        ),
+        make_employee(
+            id="emp-14",
+            country="CA",
+            rating=4.8,
+            first_name="Hannah",
+            last_name="Harris",
+        ),
+        make_employee(
+            id="emp-15", country="CA", rating=4.3, first_name="Ian", last_name="Irwin"
+        ),
+        make_employee(
+            id="emp-16",
+            country="CA",
+            rating=3.9,
+            first_name="Julia",
+            last_name="Johnson",
+        ),
+        make_employee(
+            id="emp-17", country="CA", rating=3.4, first_name="Kevin", last_name="King"
+        ),
+        make_employee(
+            id="emp-18", country="CA", rating=2.8, first_name="Laura", last_name="Lewis"
+        ),
+        make_employee(
+            id="emp-19",
+            country="CA",
+            rating=2.2,
+            first_name="Michael",
+            last_name="Miller",
+        ),
+        make_employee(
+            id="emp-20", country="CA", rating=1.8, first_name="Nina", last_name="Nelson"
+        ),
+    ]

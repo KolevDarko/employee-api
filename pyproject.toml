@@ -16,6 +16,8 @@ dependencies = [
     "sqlalchemy (>=2.0.50,<3.0.0)",
     "aiosqlite (>=0.22.1,<0.23.0)",
     "alembic (>=1.18.4,<2.0.0)",
+    "email-validator (>=2.3.0,<3.0.0)",
+    "greenlet (>=3.5.1,<4.0.0)",
 ]
 
 [project.scripts]
@@ -29,6 +31,8 @@ build-backend = "poetry.core.masonry.api"
 mypy = "^2.1.0"
 pytest = "^9.0.3"
 ruff = "^0.15.14"
+faker = "^40.19.1"
+anyio = "^4.13.0"
 
 [tool.ruff]
 target-version = "py312"
