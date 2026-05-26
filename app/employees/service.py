@@ -1,7 +1,9 @@
 from datetime import UTC, datetime
 from logging import getLogger
+from typing import cast
 
 import httpx
+from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.service import get_token
@@ -19,23 +21,37 @@ async def fetch_and_store_employees(session: AsyncSession) -> None:
 
 
 async def _fetch_from_upstream() -> list[UpstreamEmployee]:
+    raw_employees = await _fetch_upstream_employee_data()
+    return _process_upstream_employees(raw_employees)
+
+
+async def _fetch_upstream_employee_data() -> list[dict[str, object]]:
     settings = get_settings()
     token = await get_token()
     headers = {settings.auth_header_name: f"Bearer {token}"}
     async with httpx.AsyncClient() as client:
-        response = await client.get(settings.employee_api_employees_url, headers=headers)
+        response = await client.get(
+            settings.employee_api_employees_url,
+            headers=headers,
+        )
         response.raise_for_status()
-        upstream_employees = []
-        for e in response.json():
-            try:
-                employee = UpstreamEmployee.model_validate(e)
-                upstream_employees.append(employee)
-                if employee.model_extra:
-                    logger.warning(f"Extra fields from upstream: {employee.model_extra}")
-            except ValidationError as e:
-                logger.error(f"Invalid upstream employee: {e}", exc_info=True)
-                continue
-        return upstream_employees
+        return cast(list[dict[str, object]], response.json())
+
+
+def _process_upstream_employees(
+    raw_employees: list[dict[str, object]],
+) -> list[UpstreamEmployee]:
+    upstream_employees = []
+    for raw_employee in raw_employees:
+        try:
+            employee = UpstreamEmployee.model_validate(raw_employee)
+            upstream_employees.append(employee)
+            if employee.model_extra:
+                logger.warning(f"Extra fields from upstream: {employee.model_extra}")
+        except ValidationError as error:
+            logger.error(f"Invalid upstream employee: {error}", exc_info=True)
+            continue
+    return upstream_employees
 
 
 def _to_row(upstream: UpstreamEmployee) -> EmployeeRow:
