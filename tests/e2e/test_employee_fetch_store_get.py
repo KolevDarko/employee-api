@@ -2,11 +2,10 @@ from datetime import UTC, datetime, timedelta
 
 import httpx
 import pytest
-import respx
 
 import app.auth.service as auth_service
 from app.employees.service import fetch_and_store_employees
-from app.settings import Settings, get_settings
+from app.settings import Settings
 
 FAKE_BASE_URL = "https://fake-upstream.test"
 
@@ -79,7 +78,9 @@ def _reset_auth_token_cache():
 async def test_fetch_store_and_get_employees(session, client, respx_mock):
     expires = (datetime.now(UTC) + timedelta(hours=1)).isoformat()
     respx_mock.post(f"{FAKE_BASE_URL}/api/token").mock(
-        return_value=httpx.Response(200, json={"access_token": "fake-token", "expires_at": expires})
+        return_value=httpx.Response(
+            200, json={"access_token": "fake-token", "expires_at": expires}
+        )
     )
     respx_mock.get(f"{FAKE_BASE_URL}/api/employee/list").mock(
         return_value=httpx.Response(200, json=UPSTREAM_EMPLOYEES)
@@ -87,7 +88,7 @@ async def test_fetch_store_and_get_employees(session, client, respx_mock):
     no_employees_response = client.get("/employees/")
     assert no_employees_response.status_code == 200
     assert no_employees_response.json() == []
-    
+
     await fetch_and_store_employees(session)
 
     response = client.get("/employees/")
