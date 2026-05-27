@@ -66,10 +66,64 @@
         }
         .field { margin: 6px 0; }
         .field span { font-weight: 600; }
+        .filters {
+            background: white;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .filters label {
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .filters input,
+        .filters select {
+            margin-top: 4px;
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
     <h1>Employee Directory</h1>
+
+    <div class="filters">
+        <label>Country
+            <input type="text" id="filter-country" placeholder="e.g. USA">
+        </label>
+        <label>Min Rating
+            <input type="number" id="filter-min-rating" step="0.1" min="0" max="5" placeholder="0.0">
+        </label>
+        <label>Sort By
+            <select id="filter-sort-by">
+                <option value="">--</option>
+                <option value="first_name">First Name</option>
+                <option value="last_name">Last Name</option>
+                <option value="rating">Rating</option>
+                <option value="date_of_birth">Date of Birth</option>
+            </select>
+        </label>
+        <label>Sort Order
+            <select id="filter-sort-order">
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+        </label>
+        <label>Limit
+            <input type="number" id="filter-limit" min="1" placeholder="all">
+        </label>
+        <label>Offset
+            <input type="number" id="filter-offset" min="0" placeholder="0">
+        </label>
+    </div>
+
     <button onclick="loadEmployees()">Load Employees</button>
     <ol id="list"></ol>
 
@@ -79,13 +133,29 @@
 
     <script>
         async function loadEmployees() {
-            const res = await fetch('/employees/');
+            const params = new URLSearchParams();
+            const country = document.getElementById('filter-country').value;
+            const minRating = document.getElementById('filter-min-rating').value;
+            const sortBy = document.getElementById('filter-sort-by').value;
+            const sortOrder = document.getElementById('filter-sort-order').value;
+            const limit = document.getElementById('filter-limit').value;
+            const offset = document.getElementById('filter-offset').value;
+            if (country) params.set('country', country);
+            if (minRating) params.set('min_rating', minRating);
+            if (sortBy) params.set('sort_by', sortBy);
+            if (sortOrder) params.set('sort_order', sortOrder);
+            if (limit) params.set('limit', limit);
+            if (offset) params.set('offset', offset);
+            const res = await fetch('/employees/?' + params.toString());
             const data = await res.json();
             const list = document.getElementById('list');
             list.innerHTML = '';
             data.forEach(emp => {
                 const li = document.createElement('li');
-                li.textContent = emp.first_name + ' ' + emp.last_name;
+                li.textContent = emp.first_name + ' ' + emp.last_name
+                    + ' | Rating: ' + emp.rating
+                    + ' | DOB: ' + emp.date_of_birth
+                    + ' | ' + emp.country;
                 li.onclick = () => showEmployee(emp.id);
                 list.appendChild(li);
             });
