@@ -3,6 +3,7 @@ import io
 
 import pytest
 
+
 @pytest.fixture(autouse=True)
 async def auto_seed(seed):
     pass
@@ -22,7 +23,12 @@ async def test_get_employees_returns_seeded_data(client):
 async def test_get_employees_applies_filters_and_sorting(client):
     response = client.get(
         "/employees/",
-        params={"country": "MK", "min_rating": 4.0, "sort_by": "rating", "sort_order": "desc"},
+        params={
+            "country": "MK",
+            "min_rating": 4.0,
+            "sort_by": "rating",
+            "sort_order": "desc",
+        },
     )
 
     assert response.status_code == 200
@@ -34,7 +40,9 @@ async def test_get_employees_applies_filters_and_sorting(client):
 
 @pytest.mark.anyio
 async def test_get_employees_returns_csv_when_requested(client):
-    response = client.get("/employees/", params={"country": "CA", "limit": 2, "format": "csv"})
+    response = client.get(
+        "/employees/", params={"country": "CA", "limit": 2, "format": "csv"}
+    )
 
     assert response.status_code == 200
     assert response.headers["content-type"].startswith("text/csv")

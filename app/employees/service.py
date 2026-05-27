@@ -5,7 +5,13 @@ from typing import cast
 import httpx
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
-from tenacity import before_sleep_log, retry, retry_if_exception, stop_after_attempt, wait_exponential
+from tenacity import (
+    before_sleep_log,
+    retry,
+    retry_if_exception,
+    stop_after_attempt,
+    wait_exponential,
+)
 
 from app.auth.service import get_token
 from app.employees import repository
@@ -14,6 +20,7 @@ from app.employees.schemas import UpstreamEmployee
 from app.settings import get_settings
 
 logger = getLogger(__name__)
+
 
 async def fetch_and_store_employees(session: AsyncSession) -> None:
     upstream_employees = await _fetch_from_upstream()

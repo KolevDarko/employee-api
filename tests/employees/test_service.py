@@ -7,6 +7,7 @@ import pytest
 from app.employees import repository, service
 from app.employees.schemas import EmployeeFilters
 
+
 def make_upstream_employee_data(**overrides: object) -> dict[str, object]:
     defaults = {
         "id": "upstream-employee-01",
@@ -32,8 +33,8 @@ async def test_fetch_and_store_employees_stores_all_returned_employees(
 
     async def mock_fetch_upstream_employee_data() -> list[dict[str, object]]:
         return [
-        make_upstream_employee_data(id="service-happy-01", first_name="First"),
-        make_upstream_employee_data(id="service-happy-02", first_name="Second"),
+            make_upstream_employee_data(id="service-happy-01", first_name="First"),
+            make_upstream_employee_data(id="service-happy-02", first_name="Second"),
         ]
 
     monkeypatch.setattr(
@@ -60,10 +61,12 @@ async def test_fetch_and_store_employees_skips_invalid_employee_data(
 ):
     async def mock_fetch_upstream_employee_data() -> list[dict[str, object]]:
         return [
-        make_upstream_employee_data(id="service-valid-01"),
-        make_upstream_employee_data(id="service-invalid-01", email="not-an-email"),
-        make_upstream_employee_data(id="service-invalid-02", date_of_birth="tomorrow"),
-    ]
+            make_upstream_employee_data(id="service-valid-01"),
+            make_upstream_employee_data(id="service-invalid-01", email="not-an-email"),
+            make_upstream_employee_data(
+                id="service-invalid-02", date_of_birth="tomorrow"
+            ),
+        ]
 
     monkeypatch.setattr(
         service,
@@ -81,8 +84,9 @@ async def test_fetch_and_store_employees_skips_invalid_employee_data(
     assert invalid_email_employee is None
     assert invalid_date_employee is None
 
+
 @pytest.mark.anyio
-async def test_fetch_and_store_employees_returns_empty_list_when_no_employees_are_returned(monkeypatch, session):
+async def test_fetch_and_store_employees_returns_empty_list(monkeypatch, session):
     async def mock_fetch_upstream_employee_data() -> list[dict[str, object]]:
         return []
 
@@ -109,6 +113,7 @@ async def test_fetch_upstream_employee_data_retries_with_exponential_backoff(
 
     class StubAsyncClient:
         attempts = 0
+
         async def __aenter__(self):
             return self
 

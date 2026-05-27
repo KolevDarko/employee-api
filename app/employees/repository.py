@@ -6,7 +6,9 @@ from app.employees.models import EmployeeRow
 from app.employees.schemas import EmployeeFilters
 
 
-async def get_filtered_employees(session: AsyncSession, filters: EmployeeFilters) -> list[EmployeeRow]:
+async def get_filtered_employees(
+    session: AsyncSession, filters: EmployeeFilters
+) -> list[EmployeeRow]:
     query = select(EmployeeRow)
     if filters.country:
         query = query.where(EmployeeRow.country == filters.country)
@@ -18,13 +20,19 @@ async def get_filtered_employees(session: AsyncSession, filters: EmployeeFilters
         query = query.offset(filters.offset)
     if filters.sort_by:
         sort_col = getattr(EmployeeRow, filters.sort_by)
-        query = query.order_by(sort_col.desc() if filters.sort_order == "desc" else sort_col.asc())
+        query = query.order_by(
+            sort_col.desc() if filters.sort_order == "desc" else sort_col.asc()
+        )
     result = await session.scalars(query)
     return list(result.all())
 
+
 async def get_by_id(session: AsyncSession, employee_id: str) -> EmployeeRow | None:
-    result = await session.scalar(select(EmployeeRow).where(EmployeeRow.id == employee_id))
+    result = await session.scalar(
+        select(EmployeeRow).where(EmployeeRow.id == employee_id)
+    )
     return result
+
 
 async def upsert_many(session: AsyncSession, employees: list[EmployeeRow]) -> None:
     if not employees:
@@ -34,9 +42,13 @@ async def upsert_many(session: AsyncSession, employees: list[EmployeeRow]) -> No
         for emp in employees
     ]
     columns_to_update = [c.key for c in EmployeeRow.__table__.columns if c.key != "id"]
-    stmt = insert(EmployeeRow).values(rows).on_conflict_do_update(
-        index_elements=["id"],
-        set_={c: insert(EmployeeRow).excluded[c] for c in columns_to_update},
+    stmt = (
+        insert(EmployeeRow)
+        .values(rows)
+        .on_conflict_do_update(
+            index_elements=["id"],
+            set_={c: insert(EmployeeRow).excluded[c] for c in columns_to_update},
+        )
     )
     await session.execute(stmt)
     await session.commit()

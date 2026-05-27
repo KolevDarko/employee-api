@@ -13,6 +13,7 @@ class EmployeeFilters(BaseModel):
     limit: int | None = None
     offset: int | None = None
 
+
 class UpstreamEmployee(BaseModel):
     """Raw shape returned by the upstream server API."""
 

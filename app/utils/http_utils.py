@@ -6,7 +6,9 @@ from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 
 
-def json_or_csv_response(results: list[BaseModel], format: Literal["json", "csv"] | None) -> Response:
+def json_or_csv_response(
+    results: list[BaseModel], format: Literal["json", "csv"] | None
+) -> Response:
     if format == "csv":
         return _csv_response(results)
     return _json_response(results)

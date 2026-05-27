@@ -16,5 +16,6 @@ class EmployeeRow(Base):
     country = Column(String)
     bio = Column(String)
     rating = Column(Float)
-    fetched_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
-
+    fetched_at = Column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )

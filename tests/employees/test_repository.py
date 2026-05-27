@@ -1,12 +1,14 @@
 import pytest
+from tests.factories import make_employee
 
 from app.employees.repository import get_by_id, get_filtered_employees, upsert_many
 from app.employees.schemas import EmployeeFilters
-from tests.factories import make_employee
+
 
 @pytest.fixture(autouse=True)
 async def auto_seed(seed):
     pass
+
 
 @pytest.mark.anyio
 async def test_get_filtered_employees_by_country(session):
@@ -18,6 +20,7 @@ async def test_get_filtered_employees_by_country(session):
     assert all(employee.country == "MK" for employee in employees)
     assert len(employees) == 6
 
+
 @pytest.mark.anyio
 async def test_get_filtered_employees_by_rating(session):
     employees = await get_filtered_employees(
@@ -28,6 +31,7 @@ async def test_get_filtered_employees_by_rating(session):
     assert all(employee.rating >= 4.0 for employee in employees)
     assert len(employees) == 7
 
+
 @pytest.mark.anyio
 async def test_get_filtered_employees_by_sort_by(session):
     employees = await get_filtered_employees(
@@ -37,6 +41,7 @@ async def test_get_filtered_employees_by_sort_by(session):
 
     assert employees == sorted(employees, key=lambda x: x.first_name)
 
+
 @pytest.mark.anyio
 async def test_get_filtered_employees_by_sort_order(session):
     employees = await get_filtered_employees(
@@ -45,6 +50,7 @@ async def test_get_filtered_employees_by_sort_order(session):
     )
 
     assert employees == sorted(employees, key=lambda x: x.rating, reverse=True)
+
 
 @pytest.mark.anyio
 async def test_get_filtered_employees_by_offset_and_limit(session):
