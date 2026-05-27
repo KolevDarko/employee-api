@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employees</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f5f5f5;
+            color: #333;
+        }
+        h1 { margin-bottom: 20px; }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover { background: #1d4ed8; }
+        ol { padding-left: 20px; margin-top: 20px; }
+        li {
+            padding: 8px 12px;
+            margin: 4px 0;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            list-style-position: inside;
+        }
+        li:hover { background: #e0e7ff; }
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .overlay.active { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+.close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #666;
+            padding: 0;
+        }
+        .field { margin: 6px 0; }
+        .field span { font-weight: 600; }
+    </style>
+</head>
+<body>
+    <h1>Employee Directory</h1>
+    <button onclick="loadEmployees()">Load Employees</button>
+    <ol id="list"></ol>
+
+    <div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal" id="modal"></div>
+    </div>
+
+    <script>
+        async function loadEmployees() {
+            const res = await fetch('/employees/');
+            const data = await res.json();
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+            data.forEach(emp => {
+                const li = document.createElement('li');
+                li.textContent = emp.first_name + ' ' + emp.last_name;
+                li.onclick = () => showEmployee(emp.id);
+                list.appendChild(li);
+            });
+        }
+
+        async function showEmployee(id) {
+            const res = await fetch('/employees/' + id);
+            const emp = await res.json();
+            document.getElementById('modal').innerHTML =
+                '<button class="close" onclick="closeModal()">&times;</button>' +
+                '<h2>' + emp.title + ' ' + emp.first_name + ' ' + emp.last_name + '</h2>' +
+                '<div class="field"><span>Email:</span> ' + emp.email + '</div>' +
+                '<div class="field"><span>DOB:</span> ' + emp.date_of_birth + '</div>' +
+                '<div class="field"><span>Country:</span> ' + emp.country + '</div>' +
+                '<div class="field"><span>Address:</span> ' + emp.address + '</div>' +
+                '<div class="field"><span>Rating:</span> ' + emp.rating + '</div>' +
+                '<div class="field"><span>Bio:</span> ' + emp.bio + '</div>';
+            document.getElementById('overlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('overlay').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
