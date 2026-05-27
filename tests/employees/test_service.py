@@ -101,7 +101,6 @@ async def test_fetch_and_store_employees_returns_empty_list_when_no_employees_ar
 async def test_fetch_upstream_employee_data_retries_with_exponential_backoff(
     monkeypatch,
 ):
-    attempts = {"count": 0}
     backoff_seconds: list[float] = []
 
     class StubSettings:
@@ -109,6 +108,7 @@ async def test_fetch_upstream_employee_data_retries_with_exponential_backoff(
         employee_api_employees_url = "http://example.test/api/employee/list"
 
     class StubAsyncClient:
+        attempts = 0
         async def __aenter__(self):
             return self
 
@@ -116,8 +116,8 @@ async def test_fetch_upstream_employee_data_retries_with_exponential_backoff(
             return False
 
         async def get(self, url: str, headers: dict[str, str]) -> httpx.Response:
-            attempts["count"] += 1
-            if attempts["count"] == 1:
+            StubAsyncClient.attempts += 1
+            if StubAsyncClient.attempts == 1:
                 raise httpx.RequestError(
                     "temporary network issue",
                     request=httpx.Request("GET", url),
@@ -147,5 +147,5 @@ async def test_fetch_upstream_employee_data_retries_with_exponential_backoff(
     employees = await service._fetch_upstream_employee_data()
 
     assert len(employees) == 1
-    assert attempts["count"] == 2
+    assert StubAsyncClient.attempts == 2
     assert backoff_seconds == [1]
