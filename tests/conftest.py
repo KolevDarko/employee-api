@@ -8,28 +8,19 @@ from app.db.session import get_session
 from app.main import app
 
 
-@pytest.fixture(scope="module")
-async def engine():
+@pytest.fixture
+async def session():
     engine = create_async_engine("sqlite+aiosqlite:///:memory:")
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    yield engine
+    async with AsyncSession(engine) as session:
+        yield session
     await engine.dispose()
 
-
-@pytest.fixture(scope="module")
-async def seeded_engine(engine):
-    async with AsyncSession(engine) as session:
-        session.add_all(seed_employees_data())
-        await session.commit()
-    return engine
-
-
-@pytest.fixture(scope="module")
-async def session(seeded_engine):
-    async with AsyncSession(seeded_engine) as session:
-        yield session
-
+@pytest.fixture
+async def seed(session):
+    session.add_all(seed_employees_data())
+    await session.commit()
 
 @pytest.fixture
 def client(session):
@@ -39,3 +30,4 @@ def client(session):
     app.dependency_overrides[get_session] = override_get_session
     yield TestClient(app)
     app.dependency_overrides.clear()
+

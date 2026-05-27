@@ -4,6 +4,9 @@ from app.employees.repository import get_by_id, get_filtered_employees, upsert_m
 from app.employees.schemas import EmployeeFilters
 from tests.factories import make_employee
 
+@pytest.fixture(autouse=True)
+async def auto_seed(seed):
+    pass
 
 @pytest.mark.anyio
 async def test_get_filtered_employees_by_country(session):
