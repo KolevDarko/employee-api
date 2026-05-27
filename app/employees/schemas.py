@@ -1,6 +1,5 @@
 from datetime import date
 from typing import Literal
-from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, HttpUrl, field_validator
 
@@ -41,7 +40,7 @@ class EmployeeRead(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-    id: UUID
+    id: str
     date_of_birth: date
     image: HttpUrl
     email: EmailStr

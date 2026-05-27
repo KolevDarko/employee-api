@@ -20,7 +20,7 @@ def _csv_response(results: list[BaseModel]) -> Response:
     if not results:
         return Response(content="", media_type="text/csv")
     buffer = io.StringIO()
-    writer = csv.DictWriter(buffer, fieldnames=results[0].model_fields.keys())
+    writer = csv.DictWriter(buffer, fieldnames=results[0].__class__.model_fields.keys())
     writer.writeheader()
     for row in results:
         writer.writerow(row.model_dump(mode="json"))

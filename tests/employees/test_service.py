@@ -1,9 +1,11 @@
+import asyncio
 from datetime import date
 
+import httpx
 import pytest
 
 from app.employees import repository, service
-
+from app.employees.schemas import EmployeeFilters
 
 def make_upstream_employee_data(**overrides: object) -> dict[str, object]:
     defaults = {
@@ -78,3 +80,72 @@ async def test_fetch_and_store_employees_skips_invalid_employee_data(
     assert valid_employee is not None
     assert invalid_email_employee is None
     assert invalid_date_employee is None
+
+@pytest.mark.anyio
+async def test_fetch_and_store_employees_returns_empty_list_when_no_employees_are_returned(monkeypatch, session):
+    async def mock_fetch_upstream_employee_data() -> list[dict[str, object]]:
+        return []
+
+    monkeypatch.setattr(
+        service,
+        "_fetch_upstream_employee_data",
+        mock_fetch_upstream_employee_data,
+    )
+
+    await service.fetch_and_store_employees(session)
+    employees = await repository.get_filtered_employees(session, EmployeeFilters())
+    assert len(employees) == 0
+
+
+@pytest.mark.anyio
+async def test_fetch_upstream_employee_data_retries_with_exponential_backoff(
+    monkeypatch,
+):
+    attempts = {"count": 0}
+    backoff_seconds: list[float] = []
+
+    class StubSettings:
+        auth_header_name = "Access-Token"
+        employee_api_employees_url = "http://example.test/api/employee/list"
+
+    class StubAsyncClient:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, exc_type, exc, tb):
+            return False
+
+        async def get(self, url: str, headers: dict[str, str]) -> httpx.Response:
+            attempts["count"] += 1
+            if attempts["count"] == 1:
+                raise httpx.RequestError(
+                    "temporary network issue",
+                    request=httpx.Request("GET", url),
+                )
+            return httpx.Response(
+                status_code=200,
+                json=[
+                    make_upstream_employee_data(
+                        id="retry-success-01",
+                        date_of_birth="1990-01-01",
+                    )
+                ],
+                request=httpx.Request("GET", url, headers=headers),
+            )
+
+    async def record_backoff(seconds: float) -> None:
+        backoff_seconds.append(seconds)
+
+    async def mock_get_token() -> str:
+        return "token-123"
+
+    monkeypatch.setattr(asyncio, "sleep", record_backoff)
+    monkeypatch.setattr(service, "get_token", mock_get_token)
+    monkeypatch.setattr(service, "get_settings", lambda: StubSettings())
+    monkeypatch.setattr(service.httpx, "AsyncClient", StubAsyncClient)
+
+    employees = await service._fetch_upstream_employee_data()
+
+    assert len(employees) == 1
+    assert attempts["count"] == 2
+    assert backoff_seconds == [1]

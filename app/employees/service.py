@@ -1,10 +1,11 @@
 from datetime import UTC, datetime
-from logging import getLogger
+from logging import WARNING, getLogger
 from typing import cast
 
 import httpx
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
+from tenacity import before_sleep_log, retry, retry_if_exception, stop_after_attempt, wait_exponential
 
 from app.auth.service import get_token
 from app.employees import repository
@@ -25,6 +26,21 @@ async def _fetch_from_upstream() -> list[UpstreamEmployee]:
     return _process_upstream_employees(raw_employees)
 
 
+def _is_retryable_fetch_error(error: BaseException) -> bool:
+    if isinstance(error, httpx.RequestError):
+        return True
+    if isinstance(error, httpx.HTTPStatusError):
+        return error.response.status_code >= 500
+    return False
+
+
+@retry(
+    stop=stop_after_attempt(5),
+    wait=wait_exponential(multiplier=1, min=1, max=16),
+    retry=retry_if_exception(_is_retryable_fetch_error),
+    before_sleep=before_sleep_log(logger, WARNING),
+    reraise=True,
+)
 async def _fetch_upstream_employee_data() -> list[dict[str, object]]:
     settings = get_settings()
     token = await get_token()
