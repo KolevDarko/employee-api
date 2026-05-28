@@ -23,6 +23,7 @@ dependencies = [
 
 [project.scripts]
 fetch-employees = "app.cli_fetch:main"
+seed-employees = "app.cli_seed:main"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

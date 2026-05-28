@@ -24,3 +24,6 @@ run:
 docker:
 	docker build -t rumble-test .
 	docker run --env-file .env -p 8000:8000 rumble-test
+
+seed:
+	poetry run seed-employees

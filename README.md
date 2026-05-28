@@ -3,15 +3,17 @@
 ## Overview
 This is a project that fetches employee data from an upstream server, stores them in local db and exposes them via an API.
 
-## Tech stack
+## Tech/Lib stack
 Poetry for package management
 Python version 3.12
-Alembic for db migrations
-pytest for testing
+FastAPI for the API
+SQLite as local DB
+Alembic for DB migrations
+Pytest for testing
 Ruff for lint + format (Black is obsolete because Ruff can do both things now)
 Mypy for type checking
 
-## Setup
+## Setup and Run
 
 ### Prerequisites
 This project uses Python 3.12 and assumes Poetry is already installed.
@@ -70,6 +72,16 @@ Runs all tests
 Builds and starts the app via docker on port 8000
 
 `make docker`
+
+### Seed data
+You can seed data by running `make run-server` and then running `make fetch` while the server is running.
+
+But also there is a seed command.
+
+`make seed`
+
+## UI
+There is a minimal UI on the root url for easier testing of the api and the various filter options.
 
 ## Database
 We use a local SQLite database with Alembic migrations. 
