@@ -1,5 +1,9 @@
 .PHONY: run test lint fetch docker
 
+install:
+	poetry install
+	poetry run alembic upgrade head
+
 lint:
 	poetry run ruff check .
 	poetry run ruff format --check .
