@@ -12,7 +12,6 @@ Ruff for lint + format (Black is obsolete because Ruff can do both things now)
 Mypy for type checking
 
 ## Setup
-Clone the project and run the following commands:
 
 ### Prerequisites
 This project uses Python 3.12 and assumes Poetry is already installed.
@@ -44,19 +43,33 @@ LOG_LEVEL=INFO
 
 ### Install
 Installs all dependencies, and applies db migrations.
+
 `make install`
 
 ### Run
 Starts our employee service
+
 `make run` 
 
 ### Run server
 Starts a sample upstream server, if you don't have a separate one configured.
+
 `make run-server`
 
 ### Fetch employees data
 This command will pull employee data from upstream server and store them in local db.
+
 `make fetch`
+
+### Run tests
+Runs all tests
+
+`make test`
+
+### Start via Docker
+Builds and starts the app via docker on port 8000
+
+`make docker`
 
 ## Database
 We use a local SQLite database with Alembic migrations. 
