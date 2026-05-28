@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_session
@@ -13,7 +14,7 @@ router = APIRouter(prefix="/employees", tags=["employees"])
 async def get_employees(
     session: AsyncSession = Depends(get_session),
     filters: EmployeeFilters = Depends(),
-):
+) -> Response:
     employees = await get_filtered_employees(session, filters)
     readable = [EmployeeRead.model_validate(e) for e in employees]
     return json_or_csv_response(readable, filters.format)
@@ -26,4 +27,4 @@ async def get_employee(
     employee = await get_by_id(session, employee_id)
     if not employee:
         raise HTTPException(status_code=404, detail="Employee not found")
-    return employee
+    return EmployeeRead.model_validate(employee)

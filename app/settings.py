@@ -11,11 +11,11 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    employee_api_base_url: str = ""
+    employee_api_base_url: str = "http://localhost:8001"
     employee_api_client_id: str = ""
     employee_api_client_secret: str = ""
-    employee_api_username: str = ""
-    employee_api_password: str = ""
+    employee_api_username: str = "user"
+    employee_api_password: str = "pass"
     employee_api_grant_type: str = "password"
     auth_header_name: str = "Access-Token"
 
@@ -23,12 +23,12 @@ class Settings(BaseSettings):
     database_url_sync: str = "sqlite:///./dev.db"
     log_level: str = "INFO"
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def employee_api_token_url(self) -> str:
         return f"{self.employee_api_base_url.rstrip('/')}/api/token"
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def employee_api_employees_url(self) -> str:
         return f"{self.employee_api_base_url.rstrip('/')}/api/employee/list"

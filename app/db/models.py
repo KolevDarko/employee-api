@@ -1,1 +1,1 @@
-from app.employees.models import *
+from app.employees.models import *  # noqa: F403

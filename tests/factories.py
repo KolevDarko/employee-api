@@ -8,7 +8,7 @@ from app.employees.models import EmployeeRow
 fake = Faker()
 
 
-def make_employee(**overrides: dict) -> EmployeeRow:
+def make_employee(**overrides: object) -> EmployeeRow:
     defaults = {
         "id": str(uuid.uuid4()),
         "date_of_birth": fake.date_of_birth(minimum_age=18, maximum_age=75),
